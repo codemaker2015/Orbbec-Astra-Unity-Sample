@@ -1,0 +1,18 @@
+﻿#pragma kernel ColourToTexture
+
+RWTexture2D<float4> ColorMap;
+StructuredBuffer<float> ColorBuffer;
+float width, height;
+int bufferLength;
+
+[numthreads(8,8,1)]
+void ColourToTexture (uint3 id : SV_DispatchThreadID)
+{
+	uint i = id.x + id.y * width;
+	uint maxSize = bufferLength - 1;
+    ColorMap[id.xy] = float4(
+		ColorBuffer[maxSize - (i * 3 + 2)] / 256,
+		ColorBuffer[maxSize - (i * 3 + 1)] / 256,
+		ColorBuffer[maxSize - (i * 3)] / 256,
+		1);
+}

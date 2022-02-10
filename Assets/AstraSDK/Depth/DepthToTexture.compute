@@ -1,0 +1,25 @@
+﻿#pragma kernel DepthToTexture
+
+StructuredBuffer<float> DepthBuffer;
+RWTexture2D<float4> DepthMap; // for the RenderTexture the dimensions are RGBA
+                                 // for the VFX graph, this will map into coordinates XYZ. 4th dimension is unused
+float width, height;
+float maxDistance;
+float cutOff;
+int bufferLength;
+
+[numthreads(8,8,1)]
+void DepthToTexture (uint3 id : SV_DispatchThreadID)
+{
+	uint i = id.x + id.y * width;
+	uint maxSize = bufferLength - 1;
+	float depth = DepthBuffer[maxSize - i] / maxDistance;
+	if (DepthBuffer[maxSize - i] > cutOff) {
+		depth = 0;
+	}
+	DepthMap[id.xy] = float4(
+		depth,
+		depth,
+		depth,
+		1.0);
+}

@@ -1,0 +1,13 @@
+﻿#pragma kernel SetParticlePos
+
+// Create a RenderTexture with enableRandomWrite flag and set it
+// with cs.SetTexture
+RWTexture2D<float3> PositionMap;
+
+[numthreads(8,8,1)]
+void SetParticlePos(uint3 id : SV_DispatchThreadID)
+{
+    // TODO: insert actual code here!
+
+    PositionMap[id.xy] = float3(id.x & id.y, (id.x & 15)/15.0, (id.y & 15)/15.0);
+}
